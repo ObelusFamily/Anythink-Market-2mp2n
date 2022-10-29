@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Response
 from starlette import status
@@ -33,8 +33,12 @@ async def list_items(
     items_filters: ItemsFilters = Depends(get_items_filters),
     user: Optional[User] = Depends(get_current_user_authorizer(required=False)),
     items_repo: ItemsRepository = Depends(get_repository(ItemsRepository)),
+    title: Union[str, None] = None
 ) -> ListOfItemsInResponse:
+    # if title:
+    #     items_filters.title = title
     items = await items_repo.filter_items(
+        title=title,
         tag=items_filters.tag,
         seller=items_filters.seller,
         favorited=items_filters.favorited,
